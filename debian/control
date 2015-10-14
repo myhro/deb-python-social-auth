@@ -6,8 +6,8 @@ Build-Depends: python-all (>= 2.7~), python-setuptools, debhelper (>= 9), python
 Standards-Version: 3.9.6
 Uploaders: KURASHIKI Satoru <lurdan@gmail.com>, W. Martin Borgert <debacle@debian.org>
 Homepage: http://psa.matiasaguirre.net
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/python-social-auth.git
-Vcs-Git: git://anonscm.debian.org/collab-maint/python-social-auth.git
+Vcs-Git: git://anonscm.debian.org/python-modules/packages/python-social-auth.git
+Vcs-Browser: https://anonscm.debian.org/cgit/python-modules/packages/python-social-auth.git
 
 Package: python-social-auth
 Architecture: all

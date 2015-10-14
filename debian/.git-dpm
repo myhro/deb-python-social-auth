@@ -6,3 +6,6 @@
 python-social-auth_0.2.1.orig.tar.gz
 6cd8ae4353dfd1878b586dfa681b9bf4899f90d5
 259642
+debianTag="debian/%e%v"
+patchedTag="patched/%e%v"
+upstreamTag="upstream/%e%u"
