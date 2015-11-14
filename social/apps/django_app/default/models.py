@@ -12,6 +12,7 @@ from social.storage.django_orm import DjangoUserMixin, \
                                       DjangoCodeMixin, \
                                       BaseDjangoStorage
 from social.apps.django_app.default.fields import JSONField
+from social.apps.django_app.default.managers import UserSocialAuthManager
 
 
 USER_MODEL = getattr(settings, setting_name('USER_MODEL'), None) or \
@@ -26,17 +27,19 @@ ASSOCIATION_HANDLE_LENGTH = getattr(
     settings, setting_name('ASSOCIATION_HANDLE_LENGTH'), 255)
 
 
-class UserSocialAuth(models.Model, DjangoUserMixin):
-    """Social Auth association model"""
+class AbstractUserSocialAuth(models.Model, DjangoUserMixin):
+    """Abstract Social Auth association model"""
     user = models.ForeignKey(USER_MODEL, related_name='social_auth')
     provider = models.CharField(max_length=32)
     uid = models.CharField(max_length=UID_LENGTH)
     extra_data = JSONField()
+    objects = UserSocialAuthManager()
+
+    def __str__(self):
+        return str(self.user)
 
     class Meta:
-        """Meta data"""
-        unique_together = ('provider', 'uid')
-        db_table = 'social_auth_usersocialauth'
+        abstract = True
 
     @classmethod
     def get_social_auth(cls, provider, uid):
@@ -61,6 +64,15 @@ class UserSocialAuth(models.Model, DjangoUserMixin):
         return user_model
 
 
+class UserSocialAuth(AbstractUserSocialAuth):
+    """Social Auth association model"""
+
+    class Meta:
+        """Meta data"""
+        unique_together = ('provider', 'uid')
+        db_table = 'social_auth_usersocialauth'
+
+
 class Nonce(models.Model, DjangoNonceMixin):
     """One use numbers"""
     server_url = models.CharField(max_length=NONCE_SERVER_URL_LENGTH)
@@ -68,6 +80,7 @@ class Nonce(models.Model, DjangoNonceMixin):
     salt = models.CharField(max_length=65)
 
     class Meta:
+        unique_together = ('server_url', 'timestamp', 'salt')
         db_table = 'social_auth_nonce'
 
 
@@ -85,7 +98,7 @@ class Association(models.Model, DjangoAssociationMixin):
 
 
 class Code(models.Model, DjangoCodeMixin):
-    email = models.EmailField()
+    email = models.EmailField(max_length=254)
     code = models.CharField(max_length=32, db_index=True)
     verified = models.BooleanField(default=False)
 

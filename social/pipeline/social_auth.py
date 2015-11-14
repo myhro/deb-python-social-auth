@@ -2,8 +2,8 @@ from social.exceptions import AuthAlreadyAssociated, AuthException, \
                               AuthForbidden
 
 
-def social_details(backend, response, *args, **kwargs):
-    return {'details': backend.get_user_details(response)}
+def social_details(backend, details, response, *args, **kwargs):
+    return {'details': dict(backend.get_user_details(response), **details)}
 
 
 def social_uid(backend, details, response, *args, **kwargs):
@@ -83,5 +83,6 @@ def load_extra_data(backend, details, response, uid, user, *args, **kwargs):
     social = kwargs.get('social') or \
              backend.strategy.storage.user.get_social_auth(backend.name, uid)
     if social:
-        extra_data = backend.extra_data(user, uid, response, details)
+        extra_data = backend.extra_data(user, uid, response, details,
+                                        *args, **kwargs)
         social.set_extra_data(extra_data)

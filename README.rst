@@ -61,7 +61,9 @@ or current ones extended):
     * Bitbucket_ OAuth1
     * Box_ OAuth2
     * Clef_ OAuth2
+    * Coursera_ OAuth2
     * Dailymotion_ OAuth2
+    * DigitalOcean_ OAuth2 https://developers.digitalocean.com/documentation/oauth/
     * Disqus_ OAuth2
     * Douban_ OAuth1 and OAuth2
     * Dropbox_ OAuth1 and OAuth2
@@ -77,6 +79,9 @@ or current ones extended):
     * Google_ OAuth1, OAuth2 and OpenId
     * Instagram_ OAuth2
     * Jawbone_ OAuth2 https://jawbone.com/up/developer/authentication
+    * Kakao_ OAuth2 https://developer.kakao.com
+    * `Khan Academy`_ OAuth1
+    * Launchpad_ OpenId
     * Linkedin_ OAuth1
     * Live_ OAuth2
     * Livejournal_ OpenId
@@ -85,12 +90,13 @@ or current ones extended):
     * MapMyFitness_ OAuth2
     * Mendeley_ OAuth1 http://mendeley.com
     * Mixcloud_ OAuth2
+    * `Moves app`_ OAuth2 https://dev.moves-app.com/docs/authentication
     * `Mozilla Persona`_
+    * NaszaKlasa_ OAuth2
     * Odnoklassniki_ OAuth2 and Application Auth
     * OpenId_
     * OpenStreetMap_ OAuth1 http://wiki.openstreetmap.org/wiki/OAuth
     * OpenSuse_ OpenId http://en.opensuse.org/openSUSE:Connect
-    * Orkut_ OAuth1
     * PixelPin_ OAuth2
     * Pocket_ OAuth2
     * Podio_ OAuth2
@@ -112,12 +118,16 @@ or current ones extended):
     * Tumblr_ OAuth1
     * Twilio_ Auth
     * Twitter_ OAuth1
+    * Uber_ OAuth2
     * VK.com_ OpenAPI, OAuth2 and OAuth2 for Applications
     * Weibo_ OAuth2
+    * Withings_ OAuth1
+    * Wunderlist_ OAuth2
     * Xing_ OAuth1
-    * Yahoo_ OpenId and OAuth1
+    * Yahoo_ OpenId and OAuth2
     * Yammer_ OAuth2
     * Yandex_ OAuth1, OAuth2 and OpenId
+    * Zotero_ OAuth1
 
 
 User data
@@ -188,6 +198,19 @@ Or::
     $ cd python-social-auth
     $ sudo python setup.py install
 
+
+Upgrading
+---------
+
+Django with South
+~~~~~~~~~~~~~~~~~
+
+Upgrading from 0.1 to 0.2 is likely to cause problems trying to apply a migration when the tables
+already exist. In this case a fake migration needs to be applied::
+
+    $ python manage.py migrate --fake default
+
+
 Support
 ---------------------
 
@@ -218,7 +241,9 @@ check `django-social-auth LICENSE`_ for details:
 .. _Bitbucket: https://bitbucket.org
 .. _Box: https://www.box.com
 .. _Clef: https://getclef.com/
+.. _Coursera: https://www.coursera.org/
 .. _Dailymotion: https://dailymotion.com
+.. _DigitalOcean: https://www.digitalocean.com/
 .. _Disqus: https://disqus.com
 .. _Douban: http://www.douban.com
 .. _Dropbox: https://dropbox.com
@@ -231,15 +256,18 @@ check `django-social-auth LICENSE`_ for details:
 .. _Github: https://github.com
 .. _Google: http://google.com
 .. _Instagram: https://instagram.com
+.. _LaunchPad: https://help.launchpad.net/YourAccount/OpenID
 .. _Linkedin: https://www.linkedin.com
 .. _Live: https://live.com
 .. _Livejournal: http://livejournal.com
+.. _Khan Academy: https://github.com/Khan/khan-api/wiki/Khan-Academy-API-Authentication
 .. _Mailru: https://mail.ru
 .. _MapMyFitness: http://www.mapmyfitness.com/
 .. _Mixcloud: https://www.mixcloud.com
+.. _Moves app: https://dev.moves-app.com/docs/
 .. _Mozilla Persona: http://www.mozilla.org/persona/
+.. _NaszaKlasa: https://developers.nk.pl/
 .. _Odnoklassniki: http://www.odnoklassniki.ru
-.. _Orkut: http://www.orkut.com
 .. _Pocket: http://getpocket.com
 .. _Podio: https://podio.com
 .. _Shopify: http://shopify.com
@@ -252,8 +280,10 @@ check `django-social-auth LICENSE`_ for details:
 .. _Tripit: https://www.tripit.com
 .. _Twilio: https://www.twilio.com
 .. _Twitter: http://twitter.com
+.. _Uber: http://uber.com
 .. _VK.com: http://vk.com
 .. _Weibo: https://weibo.com
+.. _Wunderlist: https://wunderlist.com
 .. _Xing: https://www.xing.com
 .. _Yahoo: http://yahoo.com
 .. _Yammer: https://www.yammer.com
@@ -286,3 +316,4 @@ check `django-social-auth LICENSE`_ for details:
 .. _six: http://pythonhosted.org/six/
 .. _requests: http://docs.python-requests.org/en/latest/
 .. _PixelPin: http://pixelpin.co.uk
+.. _Zotero: http://www.zotero.org/

@@ -29,6 +29,7 @@ SOCIAL_AUTH_SETTINGS = {
         'social.backends.dailymotion.DailymotionOAuth2',
         'social.backends.disqus.DisqusOAuth2',
         'social.backends.dropbox.DropboxOAuth',
+        'social.backends.eveonline.EVEOnlineOAuth2',
         'social.backends.evernote.EvernoteSandboxOAuth',
         'social.backends.fitbit.FitbitOAuth',
         'social.backends.flickr.FlickrOAuth',
@@ -43,6 +44,8 @@ SOCIAL_AUTH_SETTINGS = {
         'social.backends.yandex.YandexOAuth2',
         'social.backends.podio.PodioOAuth2',
         'social.backends.reddit.RedditOAuth2',
+        'social.backends.mineid.MineIDOAuth2',
+        'social.backends.wunderlist.WunderlistOAuth2',
     )
 }
 
