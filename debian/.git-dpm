@@ -2,10 +2,10 @@
 71c405052418f55f8ef9d10b774b7fc0d8f847fe
 71c405052418f55f8ef9d10b774b7fc0d8f847fe
 09004a9b057364f117b03bfebf1049d26d77d3ae
-09004a9b057364f117b03bfebf1049d26d77d3ae
-python-social-auth_0.2.1.orig.tar.gz
-6cd8ae4353dfd1878b586dfa681b9bf4899f90d5
-259642
+12a78718938314ee251bfc6b4de7c8b5d738800e
+python-social-auth_0.2.13.orig.tar.gz
+b02a33cffa7f83dc139e6ba1ad75cb77ef08f52b
+330204
 debianTag="debian/%e%v"
 patchedTag="patched/%e%v"
 upstreamTag="upstream/%e%u"
