@@ -1,3 +1,9 @@
+python-social-auth (0.2.13-1) unstable; urgency=low
+
+  * new upstream release (closes: #804842)
+
+ -- W. Martin Borgert <debacle@debian.org>  Sat, 14 Nov 2015 22:44:04 +0000
+
 python-social-auth (0.2.1-2) unstable; urgency=low
 
   * Fix build-deps (closes: #764986)
