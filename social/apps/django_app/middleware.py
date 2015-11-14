@@ -8,6 +8,7 @@ from django.shortcuts import redirect
 from django.utils.http import urlquote
 
 from social.exceptions import SocialAuthBaseException
+from social.utils import social_logger
 
 
 class SocialAuthExceptionMiddleware(object):
@@ -27,8 +28,12 @@ class SocialAuthExceptionMiddleware(object):
             return
 
         if isinstance(exception, SocialAuthBaseException):
-            backend_name = request.backend.name
+            backend = getattr(request, 'backend', None)
+            backend_name = getattr(backend, 'name', 'unknown-backend')
+
             message = self.get_message(request, exception)
+            social_logger.error(message)
+
             url = self.get_redirect_uri(request, exception)
             try:
                 messages.error(request, message,

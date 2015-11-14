@@ -76,7 +76,8 @@ results and others for error situations.
 
 ``SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'``
     Used to redirect new registered users, will be used in place of
-    ``SOCIAL_AUTH_LOGIN_REDIRECT_URL`` if defined.
+    ``SOCIAL_AUTH_LOGIN_REDIRECT_URL`` if defined. Note that ``?next=/foo`` is appended if present, 
+    if you want new users to go to next, you'll need to do it yourself.
 
 ``SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'``
     Like ``SOCIAL_AUTH_NEW_USER_REDIRECT_URL`` but for new associated accounts
@@ -255,19 +256,22 @@ Miscellaneous settings
 ----------------------
 
 ``SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email',]``
-    The `user_details` pipeline processor will set certain fields on user
-    objects, such as ``email``. Set this to a list of fields you only want to
-    set for newly created users and avoid updating on further logins.
+    During the pipeline process a ``dict`` named ``details`` will be populated
+    with the needed values to create the user instance, but it's also used to
+    update the user instance. Any value in it will be checked as an attribute
+    in the user instance (first by doing ``hasattr(user, name)``). Usually
+    there are attributes that cannot be updated (like ``username``, ``id``,
+    ``email``, etc.), those fields need to be *protect*. Set any field name that
+    requires *protection* in this setting, and it won't be updated.
 
 ``SOCIAL_AUTH_SESSION_EXPIRATION = False``
     By default, user session expiration time will be set by your web
     framework (in Django, for example, it is set with
-    SOCIAL_AUTH_SESSION_EXPIRATION). Some providers return the time that the
+    `SESSION_COOKIE_AGE`_). Some providers return the time that the
     access token will live, which is stored in ``UserSocialAuth.extra_data``
     under the key ``expires``. Changing this setting to True will override your
     web framework's session length setting and set user session lengths to
     match the ``expires`` value from the auth provider.
-
 
 ``SOCIAL_AUTH_OPENID_PAPE_MAX_AUTH_AGE = <int value>``
     Enable `OpenID PAPE`_ extension support by defining this setting.
@@ -303,3 +307,4 @@ using POST.
 .. _OAuth: http://oauth.net/
 .. _passwordless authentication mechanism: https://medium.com/@ninjudd/passwords-are-obsolete-9ed56d483eb
 .. _psa-passwordless: https://github.com/omab/psa-passwordless
+.. _SESSION_COOKIE_AGE: https://docs.djangoproject.com/en/1.7/ref/settings/#std:setting-SESSION_COOKIE_AGE

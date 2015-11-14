@@ -3,6 +3,8 @@ import re
 import time
 import base64
 import uuid
+import warnings
+
 from datetime import datetime, timedelta
 
 import six
@@ -13,7 +15,7 @@ from social.backends.utils import get_backend
 from social.strategies.utils import get_current_strategy
 
 
-CLEAN_USERNAME_REGEX = re.compile(r'[^\w.@+-_]+', re.UNICODE)
+CLEAN_USERNAME_REGEX = re.compile(r'[^\w.@+_-]+', re.UNICODE)
 
 
 class UserMixin(object):
@@ -34,9 +36,14 @@ class UserMixin(object):
             return Backend(strategy=strategy)
 
     @property
-    def tokens(self):
+    def access_token(self):
         """Return access_token stored in extra_data or None"""
         return self.extra_data.get('access_token')
+
+    @property
+    def tokens(self):
+        warnings.warn('tokens is deprecated, use access_token instead')
+        return self.access_token
 
     def refresh_token(self, strategy, *args, **kwargs):
         token = self.extra_data.get('refresh_token') or \
@@ -188,9 +195,8 @@ class AssociationMixin(object):
         kwargs = {'server_url': server_url}
         if handle is not None:
             kwargs['handle'] = handle
-        return sorted([
-            (assoc.id, cls.openid_association(assoc))
-                for assoc in cls.get(**kwargs)
+        return sorted([(assoc.id, cls.openid_association(assoc))
+            for assoc in cls.get(**kwargs)
         ], key=lambda x: x[1].issued, reverse=True)
 
     @classmethod

@@ -49,7 +49,7 @@ class OdnoklassnikiApp(BaseAuth):
     name = 'odnoklassniki-app'
     ID_KEY = 'uid'
 
-    def extra_data(self, user, uid, response, details):
+    def extra_data(self, user, uid, response, details=None, *args, **kwargs):
         return dict([(key, value) for key, value in response.items()
                             if key in response['extra_data_list']])
 
@@ -67,7 +67,7 @@ class OdnoklassnikiApp(BaseAuth):
             'last_name': last_name
         }
 
-    def auth_complete(self, request, user, *args, **kwargs):
+    def auth_complete(self, *args, **kwargs):
         self.verify_auth_sig()
         response = self.get_response()
         fields = ('uid', 'first_name', 'last_name', 'name') + \

@@ -193,16 +193,16 @@ class OpenIdConnectTestMixin(object):
             client_key, timegm(expiration_datetime.utctimetuple()),
             timegm(issue_datetime.utctimetuple()), nonce, issuer)
 
-        body['id_token'] = jwt.encode(id_token, client_secret).decode('utf-8')
+        body['id_token'] = jwt.encode(id_token, client_secret,
+                                      algorithm='HS256').decode('utf-8')
         return json.dumps(body)
 
     def authtoken_raised(self, expected_message, **access_token_kwargs):
         self.access_token_body = self.prepare_access_token_body(
             **access_token_kwargs
         )
-        self.do_login.when.called_with().should.throw(
-            AuthTokenError, expected_message
-        )
+        with self.assertRaisesRegexp(AuthTokenError, expected_message):
+            self.do_login()
 
     def test_invalid_secret(self):
         self.authtoken_raised(
@@ -217,11 +217,11 @@ class OpenIdConnectTestMixin(object):
                               expiration_datetime=expiration_datetime)
 
     def test_invalid_issuer(self):
-        self.authtoken_raised('Token error: Incorrect id_token: iss',
+        self.authtoken_raised('Token error: Invalid issuer',
                               issuer='someone-else')
 
     def test_invalid_audience(self):
-        self.authtoken_raised('Token error: Incorrect id_token: aud',
+        self.authtoken_raised('Token error: Invalid audience',
                               client_key='someone-else')
 
     def test_invalid_issue_time(self):

@@ -1,4 +1,4 @@
-From 71c405052418f55f8ef9d10b774b7fc0d8f847fe Mon Sep 17 00:00:00 2001
+From 2ed9a8fbdef7b5061c60f1b817d13bea16151651 Mon Sep 17 00:00:00 2001
 From: KURASHIKI Satoru <lurdan@gmail.com>
 Date: Thu, 15 Oct 2015 00:32:30 +0200
 Subject: append uncompressed bootstrap as its source

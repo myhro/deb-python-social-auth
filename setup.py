@@ -6,7 +6,7 @@ from os.path import join, dirname, split
 from setuptools import setup
 
 
-PY3 = sys.version_info[0] == 3
+PY3 = os.environ.get('BUILD_VERSION') == '3' or sys.version_info[0] == 3
 
 version = __import__('social').__version__
 
@@ -46,35 +46,45 @@ def get_packages():
     return packages
 
 
-requires = ['requests>=1.1.0', 'oauthlib>=0.3.8', 'six>=1.2.0', 'PyJWT>=0.2.1']
-if PY3:
-    requires += ['python3-openid>=3.0.1',
-                 'requests-oauthlib>=0.3.0,<0.3.2']
-else:
-    requires += ['python-openid>=2.2', 'requests-oauthlib>=0.3.0']
+requirements_file, tests_requirements_file = {
+    False: ('requirements.txt', 'social/tests/requirements.txt'),
+    True: ('requirements-python3.txt', 'social/tests/requirements-python3.txt')
+}[PY3]
 
+with open(requirements_file, 'r') as f:
+    requirements = f.readlines()
 
-setup(name='python-social-auth',
-      version=version,
-      author='Matias Aguirre',
-      author_email='matiasaguirre@gmail.com',
-      description='Python social authentication made simple.',
-      license='BSD',
-      keywords='django, flask, pyramid, webpy, openid, oauth, social auth',
-      url='https://github.com/omab/python-social-auth',
-      packages=get_packages(),
-      # package_data={'social': ['locale/*/LC_MESSAGES/*']},
-      long_description=long_description(),
-      install_requires=requires,
-      classifiers=['Development Status :: 4 - Beta',
-                   'Topic :: Internet',
-                   'License :: OSI Approved :: BSD License',
-                   'Intended Audience :: Developers',
-                   'Environment :: Web Environment',
-                   'Programming Language :: Python',
-                   'Programming Language :: Python :: 2.6',
-                   'Programming Language :: Python :: 2.7',
-                   'Programming Language :: Python :: 3'],
-      tests_require=['sure>=1.2.5', 'httpretty>=0.8.0', 'mock>=1.0.1'],
-      test_suite='social.tests',
-      zip_safe=False)
+with open(tests_requirements_file, 'r') as f:
+    tests_requirements = [line for line in f.readlines() if '@' not in line]
+
+setup(
+    name='python-social-auth',
+    version=version,
+    author='Matias Aguirre',
+    author_email='matiasaguirre@gmail.com',
+    description='Python social authentication made simple.',
+    license='BSD',
+    keywords='django, flask, pyramid, webpy, openid, oauth, social auth',
+    url='https://github.com/omab/python-social-auth',
+    packages=get_packages(),
+    long_description=long_description(),
+    install_requires=requirements,
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Topic :: Internet',
+        'License :: OSI Approved :: BSD License',
+        'Intended Audience :: Developers',
+        'Environment :: Web Environment',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3'
+    ],
+    package_data={
+        'social/tests': ['social/tests/*.txt']
+    },
+    include_package_data=True,
+    tests_require=tests_requirements,
+    test_suite='social.tests',
+    zip_safe=False
+)
