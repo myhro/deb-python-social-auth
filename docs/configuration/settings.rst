@@ -76,7 +76,8 @@ results and others for error situations.
 
 ``SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'``
     Used to redirect new registered users, will be used in place of
-    ``SOCIAL_AUTH_LOGIN_REDIRECT_URL`` if defined.
+    ``SOCIAL_AUTH_LOGIN_REDIRECT_URL`` if defined. Note that ``?next=/foo`` is appended if present,
+    if you want new users to go to next, you'll need to do it yourself.
 
 ``SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'``
     Like ``SOCIAL_AUTH_NEW_USER_REDIRECT_URL`` but for new associated accounts
@@ -113,9 +114,9 @@ model lacks them a ``True`` value is assumed.
 Tweaking some fields length
 ---------------------------
 
-Some databases impose limitations to indexes columns (like MySQL InnoDB), these
+Some databases impose limitations on index columns (like MySQL InnoDB). These
 limitations won't play nice on some ``UserSocialAuth`` fields. To avoid such
-error define some of the following settings.
+errors, define some of the following settings.
 
 ``SOCIAL_AUTH_UID_LENGTH = <int>``
     Used to define the max length of the field `uid`. A value of 223 should work
@@ -135,12 +136,12 @@ error define some of the following settings.
 Username generation
 -------------------
 
-Some providers return an username, others just an Id or email or first and last
+Some providers return a username, others just an ID or email or first and last
 names. The application tries to build a meaningful username when possible but
 defaults to generating one if needed.
 
-An UUID is appended to usernames in case of collisions. Here are some settings
-to control usernames generation.
+A UUID is appended to usernames in case of collisions. Here are some settings
+to control username generation.
 
 ``SOCIAL_AUTH_UUID_LENGTH = 16``
     This controls the length of the UUID appended to usernames.
@@ -175,12 +176,12 @@ example to request Facebook to show Mobile authorization page, define::
 
 For other providers, just define settings in the form::
 
-      <uppercase backend name>_AUTH_EXTRA_ARGUMENTS = {...}
+      SOCIAL_AUTH_<uppercase backend name>_AUTH_EXTRA_ARGUMENTS = {...}
 
 Also, you can send extra parameters on request token process by defining
 settings in the same way explained above but with this other suffix::
 
-      <uppercase backend name>_REQUEST_TOKEN_EXTRA_ARGUMENTS = {...}
+      SOCIAL_AUTH_<uppercase backend name>_REQUEST_TOKEN_EXTRA_ARGUMENTS = {...}
 
 Basic information is requested to the different providers in order to create
 a coherent user instance (with first and last name, email and full name), this
@@ -204,21 +205,22 @@ For OAuth backends::
 Processing redirects and urlopen
 --------------------------------
 
-The application issues several redirects and API calls, this following settings
+The application issues several redirects and API calls. The following settings
 allow some tweaks to the behavior of these.
 
 ``SOCIAL_AUTH_SANITIZE_REDIRECTS = False``
     The auth process finishes with a redirect, by default it's done to the
     value of ``SOCIAL_AUTH_LOGIN_REDIRECT_URL`` but can be overridden with
-    ``next`` GET argument. If this settings is ``True``, this application will
-    very the domain of the final URL and only redirect to it if it's on the
+    ``next`` GET argument. If this setting is ``True``, this application will
+    vary the domain of the final URL and only redirect to it if it's on the
     same domain.
-   
+
 ``SOCIAL_AUTH_REDIRECT_IS_HTTPS = False``
     On projects behind a reverse proxy that uses HTTPS, the redirect URIs
-    can became with the wrong schema (``http://`` instead of ``https://``) when
-    the request lacks some headers, and might cause errors with the auth
-    process, to force HTTPS in the final URIs set this setting to ``True``
+    can have the wrong schema (``http://`` instead of ``https://``) if
+    the request lacks the appropriate headers, which might cause errors during
+    the auth process. To force HTTPS in the final URIs set this setting to
+    ``True``
 
 ``SOCIAL_AUTH_URLOPEN_TIMEOUT = 30``
     Any ``urllib2.urlopen`` call will be performed with the default timeout
@@ -255,19 +257,22 @@ Miscellaneous settings
 ----------------------
 
 ``SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email',]``
-    The `user_details` pipeline processor will set certain fields on user
-    objects, such as ``email``. Set this to a list of fields you only want to
-    set for newly created users and avoid updating on further logins.
+    During the pipeline process a ``dict`` named ``details`` will be populated
+    with the needed values to create the user instance, but it's also used to
+    update the user instance. Any value in it will be checked as an attribute
+    in the user instance (first by doing ``hasattr(user, name)``). Usually
+    there are attributes that cannot be updated (like ``username``, ``id``,
+    ``email``, etc.), those fields need to be *protect*. Set any field name that
+    requires *protection* in this setting, and it won't be updated.
 
 ``SOCIAL_AUTH_SESSION_EXPIRATION = False``
     By default, user session expiration time will be set by your web
     framework (in Django, for example, it is set with
-    SOCIAL_AUTH_SESSION_EXPIRATION). Some providers return the time that the
+    `SESSION_COOKIE_AGE`_). Some providers return the time that the
     access token will live, which is stored in ``UserSocialAuth.extra_data``
     under the key ``expires``. Changing this setting to True will override your
     web framework's session length setting and set user session lengths to
     match the ``expires`` value from the auth provider.
-
 
 ``SOCIAL_AUTH_OPENID_PAPE_MAX_AUTH_AGE = <int value>``
     Enable `OpenID PAPE`_ extension support by defining this setting.
@@ -303,3 +308,4 @@ using POST.
 .. _OAuth: http://oauth.net/
 .. _passwordless authentication mechanism: https://medium.com/@ninjudd/passwords-are-obsolete-9ed56d483eb
 .. _psa-passwordless: https://github.com/omab/psa-passwordless
+.. _SESSION_COOKIE_AGE: https://docs.djangoproject.com/en/1.7/ref/settings/#std:setting-SESSION_COOKIE_AGE

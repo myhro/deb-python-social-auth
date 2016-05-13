@@ -10,6 +10,7 @@ class DisqusOAuth2(BaseOAuth2):
     AUTHORIZATION_URL = 'https://disqus.com/api/oauth/2.0/authorize/'
     ACCESS_TOKEN_URL = 'https://disqus.com/api/oauth/2.0/access_token/'
     ACCESS_TOKEN_METHOD = 'POST'
+    SCOPE_SEPARATOR = ','
     EXTRA_DATA = [
         ('avatar', 'avatar'),
         ('connections', 'connections'),
@@ -36,10 +37,10 @@ class DisqusOAuth2(BaseOAuth2):
             'name': rr.get('name', ''),
         }
 
-    def extra_data(self, user, uid, response, details):
+    def extra_data(self, user, uid, response, details=None, *args, **kwargs):
         meta_response = dict(response, **response.get('response', {}))
         return super(DisqusOAuth2, self).extra_data(user, uid, meta_response,
-                     details)
+                                                    details, *args, **kwargs)
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""

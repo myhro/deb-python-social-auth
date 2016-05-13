@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
+import datetime
+import json
+import sys
 from calendar import timegm
 
-import sys
-import json
-import datetime
-
-import requests
 import jwt
-
+import requests
 from openid import oidutil
 
 
@@ -127,6 +125,7 @@ class OpenIdConnectTestMixin(object):
     client_key = 'a-key'
     client_secret = 'a-secret-key'
     issuer = None  # id_token issuer
+    id_token_max_age = 600  # seconds
 
     def extra_settings(self):
         settings = super(OpenIdConnectTestMixin, self).extra_settings()
@@ -134,7 +133,9 @@ class OpenIdConnectTestMixin(object):
             'SOCIAL_AUTH_{0}_KEY'.format(self.name): self.client_key,
             'SOCIAL_AUTH_{0}_SECRET'.format(self.name): self.client_secret,
             'SOCIAL_AUTH_{0}_ID_TOKEN_DECRYPTION_KEY'.format(self.name):
-                self.client_secret
+                self.client_secret,
+            'SOCIAL_AUTH_{0}_ID_TOKEN_MAX_AGE'.format(self.name):
+                self.id_token_max_age
         })
         return settings
 
@@ -193,16 +194,16 @@ class OpenIdConnectTestMixin(object):
             client_key, timegm(expiration_datetime.utctimetuple()),
             timegm(issue_datetime.utctimetuple()), nonce, issuer)
 
-        body['id_token'] = jwt.encode(id_token, client_secret).decode('utf-8')
+        body['id_token'] = jwt.encode(id_token, client_secret,
+                                      algorithm='HS256').decode('utf-8')
         return json.dumps(body)
 
-    def authtoken_raised(self, expected_message, **access_token_kwargs):
+    def authtoken_raised(self, expected_message_regexp, **access_token_kwargs):
         self.access_token_body = self.prepare_access_token_body(
             **access_token_kwargs
         )
-        self.do_login.when.called_with().should.throw(
-            AuthTokenError, expected_message
-        )
+        with self.assertRaisesRegexp(AuthTokenError, expected_message_regexp):
+            self.do_login()
 
     def test_invalid_secret(self):
         self.authtoken_raised(
@@ -217,18 +218,18 @@ class OpenIdConnectTestMixin(object):
                               expiration_datetime=expiration_datetime)
 
     def test_invalid_issuer(self):
-        self.authtoken_raised('Token error: Incorrect id_token: iss',
+        self.authtoken_raised('Token error: Invalid issuer',
                               issuer='someone-else')
 
     def test_invalid_audience(self):
-        self.authtoken_raised('Token error: Incorrect id_token: aud',
+        self.authtoken_raised('Token error: Invalid audience',
                               client_key='someone-else')
 
     def test_invalid_issue_time(self):
-        expiration_datetime = datetime.datetime.utcnow() - \
-                              datetime.timedelta(hours=1)
+        issue_datetime = datetime.datetime.utcnow() - \
+                         datetime.timedelta(seconds=self.id_token_max_age + 1)
         self.authtoken_raised('Token error: Incorrect id_token: iat',
-                              issue_datetime=expiration_datetime)
+                              issue_datetime=issue_datetime)
 
     def test_invalid_nonce(self):
         self.authtoken_raised(

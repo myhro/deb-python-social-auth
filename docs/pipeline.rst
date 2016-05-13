@@ -41,7 +41,7 @@ The default pipeline is composed by::
         'social.pipeline.social_auth.social_uid',
 
         # Verifies that the current auth process is valid within the current
-        # project, this is were emails and domains whitelists are applied (if
+        # project, this is where emails and domains whitelists are applied (if
         # defined).
         'social.pipeline.social_auth.auth_allowed',
 
@@ -71,12 +71,12 @@ The default pipeline is composed by::
         'social.pipeline.social_auth.load_extra_data',
 
         # Update the user record with any changed info from the auth service.
-        'social.pipeline.user.user_details'
+        'social.pipeline.user.user_details',
     )
 
 
-It's possible to override it by defining the setting ``SOCIAL_AUTH_PIPELINE``,
-for example a pipeline that won't create users, just accept already registered
+It's possible to override it by defining the setting ``SOCIAL_AUTH_PIPELINE``.
+For example, a pipeline that won't create users, just accept already registered
 ones would look like this::
 
     SOCIAL_AUTH_PIPELINE = (
@@ -86,7 +86,7 @@ ones would look like this::
         'social.pipeline.social_auth.social_user',
         'social.pipeline.social_auth.associate_user',
         'social.pipeline.social_auth.load_extra_data',
-        'social.pipeline.user.user_details'
+        'social.pipeline.user.user_details',
     )
 
 Note that this assumes the user is already authenticated, and thus the ``user`` key
@@ -144,7 +144,7 @@ In order to override the disconnection pipeline, just define the setting::
         'social.pipeline.disconnect.revoke_tokens',
 
         # Removes the social associations.
-        'social.pipeline.disconnect.disconnect'
+        'social.pipeline.disconnect.disconnect',
     )
 
 
@@ -178,15 +178,16 @@ There's a pipeline to validate email addresses, but it relies a lot on your
 project.
 
 The pipeline is at ``social.pipeline.mail.mail_validation`` and it's a partial
-pipeline, it will return a redirect to an URL that you can use to tell the
+pipeline, it will return a redirect to a URL that you can use to tell the
 users that an email validation was sent to them. If you want to mention the
 email address you can get it from the session under the key ``email_validation_address``.
 
 In order to send the validation python-social-auth_ needs a function that will
 take care of it, this function is defined by the developer with the setting
 ``SOCIAL_AUTH_EMAIL_VALIDATION_FUNCTION``. It should be an import path. This
-function should take two arguments ``strategy`` and ``code``.  ``code`` is
-a model instance used to validate the email address, it contains three fields:
+function should take three arguments ``strategy``, ``backend`` and ``code``.
+``code`` is a model instance used to validate the email address, it contains
+three fields:
 
 ``code = '...'``
     Holds an ``uuid.uuid4()`` value and it's the code used to identify the
@@ -261,7 +262,7 @@ responses. To enumerate a few:
     The server user-details response, it depends on the protocol in use (and
     sometimes the provider implementation of such protocol), but usually it's
     just a ``dict`` with the user profile details in such provider. Lots of
-    information related to the user is provider here, sometimes the ``scope``
+    information related to the user is provided here, sometimes the ``scope``
     will increase the amount of information in this response on OAuth
     providers.
 
@@ -302,7 +303,7 @@ returned by the provider (``Facebook`` in this example). The usual Facebook
         'updated_time': '2014-01-14T15:58:35+0000',
         'link': 'https://www.facebook.com/foobar',
         'timezone': -3,
-        'id': '100000126636010'
+        'id': '100000126636010',
     }
 
 Let's say we are interested in storing the user profile link, the gender and
@@ -329,10 +330,10 @@ the pipeline, since it needs the user instance, it needs to be put after
         'social.pipeline.social_auth.social_user',
         'social.pipeline.user.get_username',
         'social.pipeline.user.create_user',
-        'import.path.to.save_profile',  # <--- set the import-path to the function
+        'path.to.save_profile',  # <--- set the path to the function
         'social.pipeline.social_auth.associate_user',
         'social.pipeline.social_auth.load_extra_data',
-        'social.pipeline.user.user_details'
+        'social.pipeline.user.user_details',
     )
 
 If the return value of the function is a ``dict``, the values will be merged

@@ -1,4 +1,5 @@
 import json
+import six
 
 from tornado.template import Loader, Template
 
@@ -27,7 +28,9 @@ class TornadoStrategy(BaseStrategy):
         return self.request_handler.settings[name]
 
     def request_data(self, merge=True):
-        return self.request.arguments.copy()
+        # Multiple valued arguments not supported yet
+        return dict((key, val[0].decode())
+                for key, val in six.iteritems(self.request.arguments))
 
     def request_host(self):
         return self.request.host
@@ -39,14 +42,17 @@ class TornadoStrategy(BaseStrategy):
         self.request_handler.write(content)
 
     def session_get(self, name, default=None):
-        return self.request_handler.get_secure_cookie(name, value=default)
+        value = self.request_handler.get_secure_cookie(name)
+        if value:
+            return json.loads(value.decode())
+        return default
 
     def session_set(self, name, value):
-        self.request_handler.set_secure_cookie(name, str(value))
+        self.request_handler.set_secure_cookie(name, json.dumps(value).encode())
 
     def session_pop(self, name):
-        value = self.request_handler.get_secure_cookie(name)
-        self.request_handler.set_secure_cookie(name, '')
+        value = self.session_get(name)
+        self.request_handler.clear_cookie(name)
         return value
 
     def session_setdefault(self, name, value):

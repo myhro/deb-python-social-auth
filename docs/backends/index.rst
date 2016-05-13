@@ -39,6 +39,7 @@ Base OAuth and OpenId classes
 
    oauth
    openid
+   saml
 
 Social backends
 ***************
@@ -50,18 +51,27 @@ Social backends
    angel
    aol
    appsfuel
+   arcgis
+   azuread
+   battlenet
    beats
    behance
    belgium_eid
    bitbucket
    box
+   changetip
    clef
    coinbase
+   coursera
    dailymotion
+   digitalocean
    disqus
    docker
    douban
+   dribbble
+   drip
    dropbox
+   eveonline
    evernote
    facebook
    fedora
@@ -69,33 +79,49 @@ Social backends
    flickr
    foursquare
    github
+   github_enterprise
    google
    instagram
+   itembase
    jawbone
+   justgiving
    kakao
+   khanacademy
    lastfm
+   launchpad
    linkedin
    livejournal
    live
    loginradius
    mailru
    mapmyfitness
+   meetup
    mendeley
+   mineid
    mixcloud
    moves
+   naszaklasa
+   nationbuilder
+   naver
+   ngpvan_actionid
    odnoklassnikiru
    openstreetmap
+   orbi
    persona
+   pinterest
    pixelpin
    pocket
    podio
+   qiita
    qq
    rdio
    readability
    reddit
    runkeeper
+   salesforce
    shopify
    skyrock
+   slack
    soundcloud
    spotify
    suse
@@ -112,9 +138,14 @@ Social backends
    twilio
    twitch
    twitter
+   uber
+   vend
    vimeo
    vk
    weibo
+   withings
+   wunderlist
    xing
    yahoo
    yammer
+   zotero

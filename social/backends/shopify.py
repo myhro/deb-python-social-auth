@@ -5,8 +5,7 @@ Shopify OAuth2 backend, docs at:
 import imp
 import six
 
-from requests import HTTPError
-
+from social.utils import handle_http_errors
 from social.backends.oauth import BaseOAuth2
 from social.exceptions import AuthFailed, AuthCanceled
 
@@ -20,6 +19,7 @@ class ShopifyOAuth2(BaseOAuth2):
         ('website', 'website'),
         ('expires', 'expires')
     ]
+    REDIRECT_STATE = False
 
     @property
     def shopifyAPI(self):
@@ -32,9 +32,21 @@ class ShopifyOAuth2(BaseOAuth2):
     def get_user_details(self, response):
         """Use the shopify store name as the username"""
         return {
-            'username': six.text_type(response.get('shop', ''), 'utf-8')
-                                .replace('.myshopify.com', '')
+            'username': six.text_type(response.get('shop', '')).replace(
+                '.myshopify.com', ''
+            )
         }
+
+    def extra_data(self, user, uid, response, details=None, *args, **kwargs):
+        """Return access_token and extra defined names to store in
+        extra_data field"""
+        data = super(ShopifyOAuth2, self).extra_data(user, uid, response,
+                                                     details, *args, **kwargs)
+        session = self.shopifyAPI.Session(self.data.get('shop').strip())
+        # Get, and store the permanent token
+        token = session.request_token(data['access_token'])
+        data['access_token'] = token
+        return dict(data)
 
     def auth_url(self):
         key, secret = self.get_key_and_secret()
@@ -43,12 +55,13 @@ class ShopifyOAuth2(BaseOAuth2):
         state = self.state_token()
         self.strategy.session_set(self.name + '_state', state)
         redirect_uri = self.get_redirect_uri(state)
-        return self.shopifyAPI.Session.create_permission_url(
-            self.data.get('shop').strip(),
+        session = self.shopifyAPI.Session(self.data.get('shop').strip())
+        return session.create_permission_url(
             scope=scope,
             redirect_uri=redirect_uri
         )
 
+    @handle_http_errors
     def auth_complete(self, *args, **kwargs):
         """Completes login process, must return user instance"""
         self.process_error(self.data)
@@ -61,11 +74,6 @@ class ShopifyOAuth2(BaseOAuth2):
             access_token = shopify_session.token
         except self.shopifyAPI.ValidationException:
             raise AuthCanceled(self)
-        except HTTPError as err:
-            if err.response.status_code == 400:
-                raise AuthCanceled(self)
-            else:
-                raise
         else:
             if not access_token:
                 raise AuthFailed(self, 'Authentication Failed')

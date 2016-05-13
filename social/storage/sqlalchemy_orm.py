@@ -3,10 +3,16 @@ import base64
 import six
 import json
 
+try:
+    import transaction
+except ImportError:
+    transaction = None
+
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.types import PickleType, Text
-from sqlalchemy import Column, Integer, String
 from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy.ext.mutable import MutableDict
 
 from social.storage.base import UserMixin, AssociationMixin, NonceMixin, \
                                 CodeMixin, BaseStorage
@@ -22,8 +28,6 @@ class JSONType(PickleType):
 
 
 class SQLAlchemyMixin(object):
-    COMMIT_SESSION = True
-
     @classmethod
     def _session(cls):
         raise NotImplementedError('Implement in subclass')
@@ -39,9 +43,19 @@ class SQLAlchemyMixin(object):
     @classmethod
     def _save_instance(cls, instance):
         cls._session().add(instance)
-        if cls.COMMIT_SESSION:
-            cls._session().commit()
+        cls._flush()
         return instance
+
+    @classmethod
+    def _flush(cls):
+        try:
+            cls._session().flush()
+        except AssertionError:
+            if transaction:
+                with transaction.manager as manager:
+                    manager.commit()
+            else:
+                cls._session().commit()
 
     def save(self):
         self._save_instance(self)
@@ -53,7 +67,7 @@ class SQLAlchemyUserMixin(SQLAlchemyMixin, UserMixin):
     __table_args__ = (UniqueConstraint('provider', 'uid'),)
     id = Column(Integer, primary_key=True)
     provider = Column(String(32))
-    extra_data = Column(JSONType)
+    extra_data = Column(MutableDict.as_mutable(JSONType))
     uid = None
     user_id = None
     user = None
@@ -83,11 +97,7 @@ class SQLAlchemyUserMixin(SQLAlchemyMixin, UserMixin):
     @classmethod
     def disconnect(cls, entry):
         cls._session().delete(entry)
-        try:
-            cls._session().commit()
-        except AssertionError:
-            import transaction
-            transaction.commit()
+        cls._flush()
 
     @classmethod
     def user_query(cls):
@@ -181,7 +191,7 @@ class SQLAlchemyAssociationMixin(SQLAlchemyMixin, AssociationMixin):
         except IndexError:
             assoc = cls(server_url=server_url,
                         handle=association.handle)
-        assoc.secret = base64.encodestring(association.secret)
+        assoc.secret = base64.encodestring(association.secret).decode()
         assoc.issued = association.issued
         assoc.lifetime = association.lifetime
         assoc.assoc_type = association.assoc_type

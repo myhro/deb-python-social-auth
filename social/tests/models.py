@@ -24,7 +24,7 @@ class User(BaseModel):
     cache = {}
     _is_active = True
 
-    def __init__(self, username, email=None):
+    def __init__(self, username, email=None, **extra_user_fields):
         self.id = User.next_id()
         self.username = username
         self.email = email
@@ -32,6 +32,7 @@ class User(BaseModel):
         self.slug = None
         self.social = []
         self.extra_data = {}
+        self.extra_user_fields = extra_user_fields
         self.save()
 
     def is_active(self):
@@ -100,8 +101,8 @@ class TestUserSocialAuth(UserMixin, BaseModel):
         return User.cache.get(username) is not None
 
     @classmethod
-    def create_user(cls, username, email=None):
-        return User(username=username, email=email)
+    def create_user(cls, username, email=None, **extra_user_fields):
+        return User(username=username, email=email, **extra_user_fields)
 
     @classmethod
     def get_user(cls, pk):
@@ -117,7 +118,9 @@ class TestUserSocialAuth(UserMixin, BaseModel):
 
     @classmethod
     def get_social_auth_for_user(cls, user, provider=None, id=None):
-        return user.social
+        return [usa for usa in user.social
+                if provider in (None, usa.provider) and
+                id in (None, usa.id)]
 
     @classmethod
     def create_social_auth(cls, user, uid, provider):

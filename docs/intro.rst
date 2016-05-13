@@ -40,12 +40,13 @@ or extend current one):
     * Bitbucket_ OAuth1
     * Box_ OAuth2
     * Dailymotion_ OAuth2
+    * Deezer_ OAuth2
     * Disqus_ OAuth2
     * Douban_ OAuth1 and OAuth2
     * Dropbox_ OAuth1
     * Evernote_ OAuth1
     * Facebook_ OAuth2 and OAuth2 for Applications
-    * Fitbit_ OAuth1
+    * Fitbit_ OAuth2 and OAuth1
     * Flickr_ OAuth1
     * Foursquare_ OAuth2
     * `Google App Engine`_ Auth
@@ -57,12 +58,15 @@ or extend current one):
     * Live_ OAuth2
     * Livejournal_ OpenId
     * Mailru_ OAuth2
+    * MineID_ OAuth2
     * Mixcloud_ OAuth2
     * `Mozilla Persona`_
+    * NaszaKlasa_ OAuth2
+    * `NGPVAN ActionID`_ OpenId
     * Odnoklassniki_ OAuth2 and Application Auth
     * OpenId_
-    * Orkut_ OAuth1
     * Podio_ OAuth2
+    * Pinterest_ OAuth2
     * Rdio_ OAuth1 and OAuth2
     * Readability_ OAuth1
     * Shopify_ OAuth2
@@ -82,6 +86,7 @@ or extend current one):
     * Vimeo_ OAuth1
     * VK.com_ OpenAPI, OAuth2 and OAuth2 for Applications
     * Weibo_ OAuth2
+    * Wunderlist_ OAuth2
     * Xing_ OAuth1
     * Yahoo_ OpenId and OAuth1
     * Yammer_ OAuth2
@@ -91,7 +96,7 @@ or extend current one):
 User data
 *********
 
-Basic user data population, to allows custom fields values from providers
+Basic user data population, to allow custom fields values from providers
 response.
 
 
@@ -118,6 +123,7 @@ section.
 .. _Bitbucket: https://bitbucket.org
 .. _Box: https://www.box.com
 .. _Dailymotion: https://dailymotion.com
+.. _Deezer: https://www.deezer.com
 .. _Disqus: https://disqus.com
 .. _Douban: http://www.douban.com
 .. _Dropbox: https://dropbox.com
@@ -135,10 +141,12 @@ section.
 .. _Live: https://www.live.com
 .. _Livejournal: http://livejournal.com
 .. _Mailru: https://mail.ru
+.. _MineID: https://www.mineid.org
 .. _Mixcloud: https://www.mixcloud.com
 .. _Mozilla Persona: http://www.mozilla.org/persona/
+.. _NaszaKlasa: https://developers.nk.pl/
+.. _NGPVAN ActionID: http://developers.ngpvan.com/action-id
 .. _Odnoklassniki: http://www.odnoklassniki.ru
-.. _Orkut: http://www.orkut.com
 .. _Podio: https://podio.com
 .. _Shopify: http://shopify.com
 .. _Skyrock: https://skyrock.com
@@ -153,10 +161,12 @@ section.
 .. _Twitter: http://twitter.com
 .. _VK.com: http://vk.com
 .. _Weibo: http://weibo.com
+.. _Wunderlist: http://wunderlist.com
 .. _Xing: https://www.xing.com
 .. _Yahoo: http://yahoo.com
 .. _Yammer: https://www.yammer.com
 .. _Yandex: https://yandex.ru
+.. _Pinterest: https://www.pinterest.com
 .. _Readability: http://www.readability.com/
 .. _Stackoverflow: http://stackoverflow.com/
 .. _Steam: http://steamcommunity.com/

@@ -36,6 +36,19 @@ Also ensure to define the MongoEngine_ storage setting::
 Database
 --------
 
+(For Django 1.7 and higher) sync database to create needed models::
+
+    ./manage.py migrate
+
+If you're still using South, you'll need override SOUTH_MIGRATION_MODULES_::
+
+    SOUTH_MIGRATION_MODULES = {
+        'default': 'social.apps.django_app.default.south_migrations'
+    }
+
+Note that Django's app labels take the last part of the import, so
+in this case ``social.apps.django_app.default`` becomes ``default`` here.
+
 Sync database to create needed models::
 
     ./manage.py syncdb
@@ -75,6 +88,10 @@ Add URLs entries::
         url('', include('social.apps.django_app.urls', namespace='social'))
         ...
     )
+
+In case you need a custom namespace, this setting is also needed::
+
+    SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 
 Template Context Processors
@@ -131,9 +148,8 @@ A base middleware is provided that handles ``SocialAuthBaseException`` by
 providing a message to the user via the Django messages framework, and then
 responding with a redirect to a URL defined in one of the middleware methods.
 
-The middleware is at ``social.apps.django_app.middleware.SocialAuthExceptionMiddleware``. 
-Any method can be overrided but for simplifications these two are the
-recommended::
+The middleware is at ``social.apps.django_app.middleware.SocialAuthExceptionMiddleware``.
+Any method can be overridden, but for simplicity these two are recommended::
 
     get_message(request, exception)
     get_redirect_uri(request, exception)
@@ -194,3 +210,4 @@ The fields listed **must** be user models fields.
 .. _Django built-in app: https://github.com/omab/python-social-auth/tree/master/social/apps/django_app
 .. _AUTHENTICATION_BACKENDS: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#authentication-backends
 .. _django@dc43fbc: https://github.com/django/django/commit/dc43fbc2f21c12e34e309d0e8a121020391aa03a
+.. _SOUTH_MIGRATION_MODULES: http://south.readthedocs.org/en/latest/settings.html#south-migration-modules

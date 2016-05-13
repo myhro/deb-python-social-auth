@@ -1,6 +1,6 @@
 from requests import request, ConnectionError
 
-from social.utils import module_member, parse_qs, user_agent
+from social.utils import SSLHttpAdapter, module_member, parse_qs, user_agent
 from social.exceptions import AuthFailed
 
 
@@ -13,6 +13,7 @@ class BaseAuth(object):
     EXTRA_DATA = None
     REQUIRES_EMAIL_VALIDATION = False
     SEND_USER_AGENT = False
+    SSL_PROTOCOL = None
 
     def __init__(self, strategy=None, redirect_uri=None):
         self.strategy = strategy
@@ -103,6 +104,7 @@ class BaseAuth(object):
         out.setdefault('strategy', self.strategy)
         out.setdefault('backend', out.pop(self.name, None) or self)
         out.setdefault('request', self.strategy.request_data())
+        out.setdefault('details', {})
 
         for idx, name in enumerate(pipeline):
             out['pipeline_index'] = pipeline_index + idx
@@ -114,8 +116,8 @@ class BaseAuth(object):
         self.strategy.clean_partial_pipeline()
         return out
 
-    def extra_data(self, user, uid, response, details):
-        """Return deafault extra data to store in extra_data field"""
+    def extra_data(self, user, uid, response, details=None, *args, **kwargs):
+        """Return default extra data to store in extra_data field"""
         data = {}
         for entry in (self.EXTRA_DATA or []) + self.setting('EXTRA_DATA', []):
             if not isinstance(entry, (list, tuple)):
@@ -190,13 +192,9 @@ class BaseAuth(object):
         kwargs.update({'backend': self, 'strategy': self.strategy})
         return self.authenticate(*args, **kwargs)
 
-    def request_token_extra_arguments(self):
-        """Return extra arguments needed on request-token process"""
-        return self.setting('REQUEST_TOKEN_EXTRA_ARGUMENTS', {})
-
     def auth_extra_arguments(self):
         """Return extra arguments needed on auth process. The defaults can be
-        overriden by GET parameters."""
+        overridden by GET parameters."""
         extra_arguments = self.setting('AUTH_EXTRA_ARGUMENTS', {}).copy()
         extra_arguments.update((key, self.data[key]) for key in extra_arguments
                                     if key in self.data)
@@ -209,14 +207,19 @@ class BaseAuth(object):
 
     def request(self, url, method='GET', *args, **kwargs):
         kwargs.setdefault('headers', {})
+        if self.setting('VERIFY_SSL') is not None:
+            kwargs.setdefault('verify', self.setting('VERIFY_SSL'))
         kwargs.setdefault('timeout', self.setting('REQUESTS_TIMEOUT') or
                                      self.setting('URLOPEN_TIMEOUT'))
-
         if self.SEND_USER_AGENT and 'User-Agent' not in kwargs['headers']:
             kwargs['headers']['User-Agent'] = user_agent()
 
         try:
-            response = request(method, url, *args, **kwargs)
+            if self.SSL_PROTOCOL:
+                session = SSLHttpAdapter.ssl_adapter_session(self.SSL_PROTOCOL)
+                response = session.request(method, url, *args, **kwargs)
+            else:
+                response = request(method, url, *args, **kwargs)
         except ConnectionError as err:
             raise AuthFailed(self, str(err))
         response.raise_for_status()

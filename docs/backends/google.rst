@@ -6,6 +6,11 @@ This section describes how to setup the different services provided by Google.
 Google OAuth
 ------------
 
+.. attention:: **Google OAuth deprecation**
+   Important: OAuth 1.0 was officially deprecated on April 20, 2012, and will be
+   shut down on April 20, 2015. We encourage you to migrate to any of the other
+   protocols.
+
 Google provides ``Consumer Key`` and ``Consumer Secret`` keys to registered
 applications, but also allows unregistered application to use their authorization
 system with, but beware that this method will display a security banner to the
@@ -58,69 +63,102 @@ Google+ Sign-In
 done by their Javascript which thens calls a defined handler to complete the
 auth process.
 
-* To enable the backend create an application using the `Google console`_ and
-  fill the key settings::
+* To enable the backend create an application using the `Google
+  console`_ and following the steps from the `official guide`_. Make
+  sure to enable the Google+ API in the console.
+
+* Fill in the key settings looking inside the Google console the subsection
+  ``Credentials`` inside ``API & auth``::
+
+    AUTHENTICATION_BACKENDS = (
+        ...
+        'social.backends.google.GooglePlusAuth',
+    )
 
     SOCIAL_AUTH_GOOGLE_PLUS_KEY = '...'
     SOCIAL_AUTH_GOOGLE_PLUS_SECRET = '...'
 
-* Add their button snippet to your template::
+  ``SOCIAL_AUTH_GOOGLE_PLUS_KEY`` corresponds to the variable ``CLIENT ID``.
+  ``SOCIAL_AUTH_GOOGLE_PLUS_SECRET`` corresponds to the variable
+  ``CLIENT SECRET``.
 
-    <div id="signinButton">
-        <span class="g-signin" data-scope="{{ plus_scope }}"
-                               data-clientid="{{ plus_id }}"
-                               data-redirecturi="postmessage"
-                               data-accesstype="offline"
-                               data-cookiepolicy="single_host_origin"
-                               data-callback="signInCallback">
-        </span>
-    </div>
+* Add the sign-in button to your template, you can use the SDK button
+  or add your own and attach the click handler to it (check `Google+ Identity Sign-In`_
+  documentation about it)::
 
-  ``signInCallback`` is the name of your Javascript callback function.
+    <div id="google-plus-button">Google+ Sign In</div>
 
-* The scope can be generated doing::
+* Add the Javascript snippet in the same template as above::
 
-    from social.backends.google import GooglePlusAuth
-    plus_scope = ' '.join(GooglePlusAuth.DEFAULT_SCOPE)
-
-  Or get the value from settings if it was overridden. ``plus_id`` is the value
-  from ``SOCIAL_AUTH_GOOGLE_PLUS_KEY``.
-
-* Add the Javascript snippet::
-
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        (function () {
-            var po = document.createElement('script');
-            po.type = 'text/javascript';
-            po.async = true;
-            po.src = 'https://plus.google.com/js/client:plusone.js?onload=start';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(po, s);
-        })();
-    </script>
-
-* Define your Javascript callback function::
+    <script src="https://apis.google.com/js/api:client.js"></script>
 
     <script type="text/javascript">
-        var signInCallback = function (result) {
-            if (result['error']) {
-                alert('An error happened:', result['error']);
-            } else {
-                $('#code').attr('value', result['code']);
-                $('#at').attr('value', result['access_token']);
-                $('#google-plus').submit();
-            }
-        };
+      gapi.load('auth2', function () {
+        var auth2;
+
+        auth2 = gapi.auth2.init({
+          client_id: "<PUT SOCIAL_AUTH_GOOGLE_PLUS_KEY HERE>",
+          scope: "<PUT BACKEND SCOPE HERE>"
+        });
+
+        auth2.then(function () {
+          var button = document.getElementById("google-plus-button");
+          console.log("User is signed-in in Google+ platform?", auth2.isSignedIn.get() ? "Yes" : "No");
+
+          auth2.attachClickHandler(button, {}, function (googleUser) {
+            // Send access-token to backend to finish the authenticate
+            // with your application
+
+            var authResponse = googleUser.getAuthResponse();
+            var $form;
+            var $input;
+
+            $form = $("<form>");
+            $form.attr("action", "/complete/google-plus");
+            $form.attr("method", "post");
+            $input = $("<input>");
+            $input.attr("name", "access_token");
+            $input.attr("value", authResponse.access_token);
+            $form.append($input);
+            // Add csrf-token if needed
+            $(document.body).append($form);
+            $form.submit();
+          });
+        });
+      });
     </script>
 
-  In the example above the values needed to complete the auth process are
-  posted using a form like this but this is just a simple example::
+* Logging out
 
-    <form id="google-plus" method="post" action="{% url 'social:complete' "google-plus" %}">{% csrf_token %}
-        <input id="at" type="hidden" name="access_token" value="" />
-        <input id="code" type="hidden" name="code" value="" />
-    </form>
+  Logging-out can be tricky when using the the platform SDK because it
+  can trigger an automatic sign-in when listening to the user status
+  change. With the method show above, that won't happen, but if the UI
+  depends more in the SDK values than the backend, then things can get
+  out of sync easilly. To prevent this, the user should be logged-out
+  from Google+ platform too. This can be accomplished by doing::
+
+    <script type="text/javascript">
+      gapi.load('auth2', function () {
+        var auth2;
+
+        auth2 = gapi.auth2.init({
+          client_id: "{{ plus_id }}",
+          scope: "{{ plus_scope }}"
+        });
+
+        auth2.then(function () {
+          if (auth2.isSignedIn.get()) {
+            $('#logout').on('click', function (event) {
+              event.preventDefault();
+              auth2.signOut().then(function () {
+                console.log("Logged out from Google+ platform");
+                document.location = "/logout";
+              });
+            });
+          }
+        });
+      });
+    </script>
 
 
 Google OpenId
@@ -133,24 +171,7 @@ whitelists can be applied too, check the whitelists_ settings for details.
 Orkut
 -----
 
-Orkut offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
-To enable Orkut these two keys are needed.
-
-Check `Google support`_ and `Orkut API`_ for details on getting keys.
-
-- fill ``Consumer Key`` and ``Consumer Secret`` values::
-
-      SOCIAL_AUTH_ORKUT_KEY = ''
-      SOCIAL_AUTH_ORKUT_SECRET = ''
-
-- add any needed extra data to::
-
-      SOCIAL_AUTH_ORKUT_EXTRA_DATA = [...]
-
-- configure extra scopes in::
-
-      SOCIAL_AUTH_ORKUT_SCOPE = [...]
-
+As of September 30, 2014, Orkut has been `shut down`_.
 
 User identification
 -------------------
@@ -214,17 +235,18 @@ supporting them you can default to the old values by defining this setting::
     SOCIAL_AUTH_GOOGLE_PLUS_USE_DEPRECATED_API = True
 
 .. _Google support: http://www.google.com/support/a/bin/answer.py?hl=en&answer=162105
-.. _Orkut API:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _Google OpenID: http://code.google.com/apis/accounts/docs/OpenID.html
 .. _Google OAuth: http://code.google.com/apis/accounts/docs/OAuth.html
 .. _Google OAuth2: http://code.google.com/apis/accounts/docs/OAuth2.html
 .. _OAuth2 Registering: http://code.google.com/apis/accounts/docs/OAuth2.html#Registering
 .. _OAuth2 draft: http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 .. _OAuth reference: http://code.google.com/apis/accounts/docs/OAuth_ref.html#SigningOAuth
-.. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
+.. _shut down: https://support.google.com/orkut/?csw=1#Authenticating
 .. _Google Data Protocol Directory: http://code.google.com/apis/gdata/docs/directory.html
 .. _whitelists: ../configuration/settings.html#whitelists
 .. _Google+ Sign In: https://developers.google.com/+/web/signin/
 .. _Google console: https://code.google.com/apis/console
+.. _official guide: https://developers.google.com/+/web/signin/#step_1_create_a_client_id_and_client_secret
 .. _Sept 1, 2014: https://developers.google.com/+/api/auth-migration#timetable
 .. _e3525187: https://github.com/omab/python-social-auth/commit/e35251878a88954cecf8e575eca27c63164b9f67
+.. _Google+ Identity Sign-In: https://developers.google.com/identity/sign-in/web/sign-in

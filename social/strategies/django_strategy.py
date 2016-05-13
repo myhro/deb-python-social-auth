@@ -5,7 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import authenticate
 from django.shortcuts import redirect
 from django.template import TemplateDoesNotExist, RequestContext, loader
-from django.utils.datastructures import MergeDict
+from django.utils.encoding import force_text
+from django.utils.functional import Promise
 from django.utils.translation import get_language
 
 from social.strategies.base import BaseStrategy, BaseTemplateStrategy
@@ -30,13 +31,18 @@ class DjangoStrategy(BaseStrategy):
         super(DjangoStrategy, self).__init__(storage, tpl)
 
     def get_setting(self, name):
-        return getattr(settings, name)
+        value = getattr(settings, name)
+        # Force text on URL named settings that are instance of Promise
+        if name.endswith('_URL') and isinstance(value, Promise):
+            value = force_text(value)
+        return value
 
     def request_data(self, merge=True):
         if not self.request:
             return {}
         if merge:
-            data = self.request.REQUEST
+            data = self.request.GET.copy()
+            data.update(self.request.POST)
         elif self.request.method == 'POST':
             data = self.request.POST
         else:
@@ -46,6 +52,26 @@ class DjangoStrategy(BaseStrategy):
     def request_host(self):
         if self.request:
             return self.request.get_host()
+
+    def request_is_secure(self):
+        """Is the request using HTTPS?"""
+        return self.request.is_secure()
+
+    def request_path(self):
+        """path of the current request"""
+        return self.request.path
+
+    def request_port(self):
+        """Port in use for this request"""
+        return self.request.META['SERVER_PORT']
+
+    def request_get(self):
+        """Request GET data"""
+        return self.request.GET.copy()
+
+    def request_post(self):
+        """Request POST data"""
+        return self.request.POST.copy()
 
     def redirect(self, url):
         return redirect(url)
@@ -105,8 +131,6 @@ class DjangoStrategy(BaseStrategy):
                 'pk': val.pk,
                 'ctype': ContentType.objects.get_for_model(val).pk
             }
-        if isinstance(val, MergeDict):
-            val = dict(val)
         return val
 
     def from_session_value(self, val):

@@ -34,17 +34,23 @@ class EvernoteOAuth1CanceledTest(EvernoteOAuth1Test):
     access_token_status = 401
 
     def test_login(self):
-        self.do_login.when.called_with().should.throw(AuthCanceled)
+        with self.assertRaises(AuthCanceled) as cm:
+            self.do_login()
+        self.assertTrue(cm.exception.response is not None)
 
     def test_partial_pipeline(self):
-        self.do_partial_pipeline.when.called_with().should.throw(AuthCanceled)
+        with self.assertRaises(AuthCanceled) as cm:
+            self.do_partial_pipeline()
+        self.assertTrue(cm.exception.response is not None)
 
 
 class EvernoteOAuth1ErrorTest(EvernoteOAuth1Test):
     access_token_status = 500
 
     def test_login(self):
-        self.do_login.when.called_with().should.throw(HTTPError)
+        with self.assertRaises(HTTPError):
+            self.do_login()
 
     def test_partial_pipeline(self):
-        self.do_partial_pipeline.when.called_with().should.throw(HTTPError)
+        with self.assertRaises(HTTPError):
+            self.do_partial_pipeline()
