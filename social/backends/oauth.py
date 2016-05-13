@@ -371,7 +371,7 @@ class BaseOAuth2(OAuthAuth):
 
     @handle_http_errors
     def auth_complete(self, *args, **kwargs):
-        """Completes loging process, must return user instance"""
+        """Completes login process, must return user instance"""
         state = self.validate_state()
         self.process_error(self.data)
 
@@ -392,6 +392,8 @@ class BaseOAuth2(OAuthAuth):
         data = self.user_data(access_token, *args, **kwargs)
         response = kwargs.get('response') or {}
         response.update(data or {})
+        if 'access_token' not in response:
+          response['access_token'] = access_token
         kwargs.update({'response': response, 'backend': self})
         return self.strategy.authenticate(*args, **kwargs)
 
