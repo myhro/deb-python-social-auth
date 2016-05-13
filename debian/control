@@ -1,18 +1,29 @@
 Source: python-social-auth
-Maintainer: Debian Python Modules Team <python-modules-team@lists.alioth.debian.org>
 Section: python
 Priority: optional
-Build-Depends: python-all (>= 2.7~), python-setuptools, debhelper (>= 9), python3-all, python3-setuptools, dh-python, python-sphinx, python3-sphinx
-Standards-Version: 3.9.6
-Uploaders: KURASHIKI Satoru <lurdan@gmail.com>, W. Martin Borgert <debacle@debian.org>
+Maintainer: Debian Python Modules Team <python-modules-team@lists.alioth.debian.org>
+Uploaders: KURASHIKI Satoru <lurdan@gmail.com>,
+           W. Martin Borgert <debacle@debian.org>,
+           Tiago Ilieve <tiago.myhro@gmail.com>
+Build-Depends: debhelper (>= 9),
+               dh-python,
+               python-all (>= 2.7~),
+               python-setuptools,
+               python-sphinx,
+               python3-all,
+               python3-setuptools,
+               python3-sphinx
+Standards-Version: 3.9.8
 Homepage: http://psa.matiasaguirre.net
 Vcs-Git: https://anonscm.debian.org/git/python-modules/packages/python-social-auth.git
-Vcs-Browser: https://anonscm.debian.org/cgit/python-modules/packages/python-social-auth.git
+Vcs-Browser: https://anonscm.debian.org/git/python-modules/packages/python-social-auth.git
 
 Package: python-social-auth
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, ${sphinxdoc:Depends}
-Description: Python social authentication made simple
+Depends: ${misc:Depends},
+         ${python:Depends},
+         ${sphinxdoc:Depends}
+Description: Python social authentication made simple (Python 2)
  Python Social Auth is an easy-to-setup social authentication/registration
  mechanism with support for several frameworks and auth providers.
  .
@@ -24,8 +35,10 @@ Description: Python social authentication made simple
 
 Package: python3-social-auth
 Architecture: all
-Depends: ${misc:Depends}, ${python3:Depends}, ${sphinxdoc:Depends}
-Description: Python social authentication made simple
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         ${sphinxdoc:Depends}
+Description: Python social authentication made simple (Python 3)
  Python Social Auth is an easy-to-setup social authentication/registration
  mechanism with support for several frameworks and auth providers.
  .
