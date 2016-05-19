@@ -1,0 +1,9 @@
+Document: python-social-auth-doc
+Title: python-social-auth HTML documentation
+Author: Matías Aguirre
+Abstract: HTML documentation for python-social-auth built with Sphinx
+Section: Programming/Python
+
+Format: HTML
+Index: /usr/share/doc/python-social-auth-doc/html/index.html
+Files: /usr/share/doc/python-social-auth-doc/html/*.html

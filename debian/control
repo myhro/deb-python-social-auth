@@ -21,8 +21,8 @@ Vcs-Browser: https://anonscm.debian.org/git/python-modules/packages/python-socia
 Package: python-social-auth
 Architecture: all
 Depends: ${misc:Depends},
-         ${python:Depends},
-         ${sphinxdoc:Depends}
+         ${python:Depends}
+Suggests: python-social-auth-doc
 Description: Python social authentication made simple (Python 2)
  Python Social Auth is an easy-to-setup social authentication/registration
  mechanism with support for several frameworks and auth providers.
@@ -36,8 +36,8 @@ Description: Python social authentication made simple (Python 2)
 Package: python3-social-auth
 Architecture: all
 Depends: ${misc:Depends},
-         ${python3:Depends},
-         ${sphinxdoc:Depends}
+         ${python3:Depends}
+Suggests: python-social-auth-doc
 Description: Python social authentication made simple (Python 3)
  Python Social Auth is an easy-to-setup social authentication/registration
  mechanism with support for several frameworks and auth providers.
@@ -47,3 +47,19 @@ Description: Python social authentication made simple (Python 3)
  and to bring support for more frameworks and ORMs.
  .
  This package provides the Python 3.x module.
+
+Package: python-social-auth-doc
+Section: doc
+Architecture: all
+Depends: libjs-sphinxdoc,
+         ${misc:Depends},
+         ${sphinxdoc:Depends}
+Description: Python social authentication made simple (Documentation)
+ Python Social Auth is an easy-to-setup social authentication/registration
+ mechanism with support for several frameworks and auth providers.
+ .
+ Crafted using base code from django-social-auth, it implements a common
+ interface to define new authentication providers from third parties,
+ and to bring support for more frameworks and ORMs.
+ .
+ This package provides the HTML documentation.
