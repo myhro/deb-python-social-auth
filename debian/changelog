@@ -19,6 +19,7 @@ python-social-auth (0.2.19-1) unstable; urgency=medium
     - Fix 'duplicate-short-description' lintian warning.
     - Run 'wrap-and-sort'.
     - Set 'Vcs-Browser' URL to the be same as 'Vcs-Git'.
+    - Shorten 'python-all' in 'Build-Depends', removing version (>= 2.7~).
   * debian/copyright:
     - Add Microsoft Open Technologies, Inc.
     - Add MIT License.
