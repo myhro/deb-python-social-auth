@@ -25,8 +25,8 @@ python-social-auth (0.2.19-1) unstable; urgency=medium
     - Set 'Vcs-Browser' URL to the be same as 'Vcs-Git'.
     - Shorten 'python-all' in 'Build-Depends', removing version (>= 2.7~).
   * debian/copyright:
+    - Add Expat License.
     - Add Microsoft Open Technologies, Inc.
-    - Add MIT License.
     - Add W. Martin Borgert and me for 'debian/*'.
     - Bump years for KURASHIKI Satoru and Matías Aguirre.
     - Remove trailing whitespaces.
@@ -37,7 +37,7 @@ python-social-auth (0.2.19-1) unstable; urgency=medium
     - Change 'override_dh_installdocs' to 'override_dh_auto_build'.
     - Remove embedded JS files from documentation.
 
- -- Tiago Ilieve <tiago.myhro@gmail.com>  Thu, 19 May 2016 12:54:30 -0300
+ -- Tiago Ilieve <tiago.myhro@gmail.com>  Tue, 24 May 2016 06:54:58 -0300
 
 python-social-auth (0.2.13-1) unstable; urgency=low
 
