@@ -33,6 +33,8 @@ python-social-auth (0.2.19+dfsg-1) unstable; urgency=medium
     - Add Microsoft Open Technologies, Inc.
     - Add W. Martin Borgert and me for 'debian/*'.
     - Bump years for KURASHIKI Satoru and Matías Aguirre.
+    - Drop Twitter, Inc.
+    - Remove Apache-2.0 paragraph which was used only by Twitter, Inc.
     - Remove trailing whitespaces.
     - Sort licenses texts by name.
     - Vertical align multiple files/years.
