@@ -1,6 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: python-social-auth
 Source: http://psa.matiasaguirre.net/
+Files-Excluded: site/*
 
 Files: *
 Copyright: 2012-2015 Matías Aguirre <matiasaguirre@gmail.com>

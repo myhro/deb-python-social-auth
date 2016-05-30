@@ -1,4 +1,4 @@
-python-social-auth (0.2.19-1) unstable; urgency=medium
+python-social-auth (0.2.19+dfsg-1) unstable; urgency=medium
 
   [ Ondřej Nový ]
   * Fixed VCS URL (https)
@@ -11,6 +11,8 @@ python-social-auth (0.2.19-1) unstable; urgency=medium
     'libjs-sphinxdoc'.
     - Drop 'python-social-auth.docs' and 'python3-social-auth.docs'.
     - Register its documents with 'doc-base'.
+  * Drop '0001-append-uncompressed-bootstrap-as-its-source.patch', as upstream
+    website files were removed.
   * debian/clean:
     - Add file, fixing "binary file contents changed" error after building the
       documentation twice.
@@ -26,6 +28,8 @@ python-social-auth (0.2.19-1) unstable; urgency=medium
     - Shorten 'python-all' in 'Build-Depends', removing version (>= 2.7~).
   * debian/copyright:
     - Add Expat License.
+    - Add 'Files-Excluded' field to remove upstream website files which
+    contained minified JavaScript without its respective sources.
     - Add Microsoft Open Technologies, Inc.
     - Add W. Martin Borgert and me for 'debian/*'.
     - Bump years for KURASHIKI Satoru and Matías Aguirre.
@@ -36,8 +40,9 @@ python-social-auth (0.2.19-1) unstable; urgency=medium
     - Build documentation as HTML instead of text.
     - Change 'override_dh_installdocs' to 'override_dh_auto_build'.
     - Remove embedded JS files from documentation.
+  * debian/watch: add 'dversionmangle' and 'repacksuffix' for '+dfsg' suffix.
 
- -- Tiago Ilieve <tiago.myhro@gmail.com>  Tue, 24 May 2016 06:54:58 -0300
+ -- Tiago Ilieve <tiago.myhro@gmail.com>  Mon, 30 May 2016 02:37:33 -0300
 
 python-social-auth (0.2.13-1) unstable; urgency=low
 
