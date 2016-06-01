@@ -7,8 +7,6 @@ python-social-auth (0.2.19+dfsg-1) unstable; urgency=medium
   * New upstream release.
   * Add newline at end of file for 'debian/source/options'.
   * Add 'python-social-auth-doc' binary package with HTML documentation:
-    - Add 'python-social-auth-doc.links' to symlink JavaScript files from
-    'libjs-sphinxdoc'.
     - Drop 'python-social-auth.docs' and 'python3-social-auth.docs'.
     - Register its documents with 'doc-base'.
   * Drop '0001-append-uncompressed-bootstrap-as-its-source.patch', as upstream
@@ -43,6 +41,9 @@ python-social-auth (0.2.19+dfsg-1) unstable; urgency=medium
     - Change 'override_dh_installdocs' to 'override_dh_auto_build'.
     - Remove embedded JS files from documentation.
   * debian/watch: add 'dversionmangle' and 'repacksuffix' for '+dfsg' suffix.
+
+  [ Dmitry Shachnev ]
+  * Use dh_sphinxdoc to symlink static JS files in the documentation.
 
  -- Tiago Ilieve <tiago.myhro@gmail.com>  Mon, 30 May 2016 02:37:33 -0300
 

@@ -10,10 +10,8 @@ export http_proxy = http://127.0.9.1:9
 export https_proxy = https://127.0.9.1:9
 
 %:
-	dh $@ --with python2,python3 --buildsystem=pybuild
+	dh $@ --with python2,python3,sphinxdoc --buildsystem=pybuild
 
 override_dh_auto_build:
 	dh_auto_build
 	cd docs/ ; $(MAKE) html
-	# Remove JS files that will be symlinked from 'libjs-sphinxdoc':
-	cd docs/_build/html/_static/ ; rm doctools.js jquery.js searchtools.js underscore.js
