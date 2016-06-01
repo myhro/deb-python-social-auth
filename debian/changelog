@@ -44,6 +44,7 @@ python-social-auth (0.2.19+dfsg-1) unstable; urgency=medium
 
   [ Dmitry Shachnev ]
   * Use dh_sphinxdoc to symlink static JS files in the documentation.
+  * Stop exporting http(s)_proxy, that is set by pybuild.
 
  -- Tiago Ilieve <tiago.myhro@gmail.com>  Mon, 30 May 2016 02:37:33 -0300
 
